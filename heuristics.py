@@ -1,6 +1,5 @@
 import numpy as np
 
-# Heuristic: Manhattan Distance
 def manhattan_distance(puzzle):
     """Calculate the Manhattan distance of the current state."""
     goal_positions = {
@@ -97,7 +96,6 @@ def manhattan_distance_with_linear_conflict(puzzle):
     return total_distance + linear_conflict_penalty
 
 
-# Heuristic: Misplaced Tiles + Manhattan Distance
 def manhattan_distance_with_misplaced_tiles(puzzle):
     return (manhattan_distance(puzzle)+misplaced_tiles(puzzle))
 

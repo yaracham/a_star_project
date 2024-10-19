@@ -1,23 +1,13 @@
 import time
 import tracemalloc
-import pickle
 import matplotlib.pyplot as plt
 
 from solvers import *
 from eight_puzzle import EightPuzzle
 from display_utils import *
 from loaded_states import states
-
 from heuristics import *
 
-
-
-
-# Function to load puzzles from a file
-def load_puzzles_from_file(filename="puzzles.pkl"):
-    with open(filename, "rb") as f:
-        puzzles = pickle.load(f)
-    return puzzles
 
 # Function to calculate the average execution time and explored nodes
 def test_heuristics_on_multiple_cases(num_tests, heuristics):
@@ -25,9 +15,6 @@ def test_heuristics_on_multiple_cases(num_tests, heuristics):
     avg_explored_nodes = {h[0]: 0 for h in heuristics}
 
     for _ in range(num_tests):
-        # Generate a random solvable puzzle
-        puzzles = load_puzzles_from_file()
-        puzzle = EightPuzzle(puzzles)
 
         for h in heuristics:
             heuristic_name, heuristic = h
@@ -41,7 +28,6 @@ def test_heuristics_on_multiple_cases(num_tests, heuristics):
 
             # End time tracking
             end_time = time.time()
-            current, peak = tracemalloc.get_traced_memory()
 
             # Stop memory tracking
             tracemalloc.stop()
@@ -76,7 +62,7 @@ if __name__ == "__main__":
         # ("Linear Conflict", linear_conflict),
         # ("Misplaced Tiles", misplaced_tiles),
         ("Manhattan Distance + Misplaced Tiles",manhattan_distance_with_misplaced_tiles),
-        ("Manhattan Distance + Linear Conflict",manhattan_distance_with_linear_conflict)
+        ("Manhattan Distance + Linear Conflict",manhattan_distance_with_linear_conflict),
         # ("Manhattan Distance + Linear conflict + Misplaced Tiles ",manhattan_misplaced_linear),
         # ("Tiles Out of Row and Column", tiles_out_of_row_and_column),
         # ("N Max Swap", n_max_swap_heuristic),
