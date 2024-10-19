@@ -120,33 +120,6 @@ def tiles_out_of_row_and_column(puzzle):
 
     return total
 
-
-
-def n_max_swap_heuristic(puzzle):
-    """Calculate heuristic based on the number of tiles that require swapping."""
-    state = puzzle.state.flatten()
-    goal_state = np.array([1, 2, 3, 4, 5, 6, 7, 8, 0])
-
-    swaps = 0
-    visited = [False] * 9
-
-    for i in range(9):
-        if visited[i] or state[i] == goal_state[i]:
-            continue
-
-        cycle_len = 0
-        x = i
-
-        while not visited[x]:
-            visited[x] = True
-            x = np.where(state == goal_state[x])[0][0]
-            cycle_len += 1
-
-        if cycle_len > 0:
-            swaps += cycle_len - 1
-
-    return swaps
-
 def manhattan_misplaced_linear(state):
     return (manhattan_distance(state) + 
             misplaced_tiles(state) + 

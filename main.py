@@ -65,7 +65,6 @@ if __name__ == "__main__":
         ("Manhattan Distance + Linear Conflict",manhattan_distance_with_linear_conflict),
         # ("Manhattan Distance + Linear conflict + Misplaced Tiles ",manhattan_misplaced_linear),
         # ("Tiles Out of Row and Column", tiles_out_of_row_and_column),
-        # ("N Max Swap", n_max_swap_heuristic),
         # ("Uniform Cost Search", lambda p: 0)
     ]
     # Create the EightPuzzle instance
