@@ -30,6 +30,9 @@ def misplaced_tiles(puzzle):
     )
     return misplaced_count
 
+def manhattan_distance_with_misplaced_tiles(puzzle):
+    return (manhattan_distance(puzzle)+misplaced_tiles(puzzle))
+
 
 def linear_conflict(puzzle):
     goal_state = np.array([
@@ -96,8 +99,7 @@ def manhattan_distance_with_linear_conflict(puzzle):
     return total_distance + linear_conflict_penalty
 
 
-def manhattan_distance_with_misplaced_tiles(puzzle):
-    return (manhattan_distance(puzzle)+misplaced_tiles(puzzle))
+
 
 
 def tiles_out_of_row_and_column(puzzle):
