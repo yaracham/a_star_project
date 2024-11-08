@@ -3,10 +3,8 @@ from utils import *
 from algorithms import *
 from tkinter import Tk, Button
 from tkinter.font import Font
-from time import time
 
 level = 1
-moves = 0
 first = "h"
 start = time.time()
 
@@ -71,19 +69,21 @@ class GUI:
     def computer_move(self):
         if level == 3:
             self.game.depth = 0
+            self.stats.maxDepth = 15
             self.game = ALPHA_BETA_SEARCH(self.game, time.time(), self.stats)
-            self.stats.print()  # Print stats after the move
-            self.stats.reset()  # Reset stats after printing
+            self.stats.print()
+            self.stats.reset() 
         elif level == 2:
-            global moves
+            self.stats.maxDepth = 10
             self.game = ALPHA_BETA_SEARCH(self.game, time.time(), self.stats)
             self.stats.print()
             self.stats.reset()
-            moves += 1
         elif level == 1:
-                self.game.depth = 0
-                self.game = ALPHA_BETA_SEARCH(self.game, time.time(), self.stats, evaluation_function=self.evaluation_function, max_depth=5)
-        
+            self.game = ALPHA_BETA_SEARCH(self.game,time.time(),self.stats)
+            self.stats.print()
+            self.stats.reset()
+        self.update()
+        self.app.config(cursor="")
 
     def update(self):
         for (x, y) in self.game.table:
@@ -116,6 +116,7 @@ class SearchStats:
         self.totalNodes = 0
         self.pruningMax = 0
         self.pruningMin = 0
+        self.maxDepth = 5
 
     def reset(self):
         self.cutOffOccured = False
@@ -123,6 +124,7 @@ class SearchStats:
         self.totalNodes = 0
         self.pruningMax = 0
         self.pruningMin = 0
+        self.maxDepth = 5
 
     def print(self):
         print("-----------------------")

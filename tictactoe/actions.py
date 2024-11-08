@@ -136,3 +136,60 @@ def UTILITY(state):
         return PLAYER_UTIL(state.table[0, 3])
 
     return 0
+
+def evaluate_line_for_four(cells):
+    """
+    Helper function to evaluate a single line (row, column, or diagonal)
+    Returns a score based on the number of potential lines of four.
+    A potential line of four is when a player has 3 marks and 1 empty cell.
+    """
+    player_count = sum(1 for cell in cells if cell == 'X')
+    opponent_count = sum(1 for cell in cells if cell == 'O')
+    empty_count = sum(1 for cell in cells if cell is None)
+
+    score = 0
+    
+    # Check if the player has 3 marks and 1 empty space
+    if player_count == 3 and empty_count == 1:
+        score += 10  # Potential line of four for the player
+    
+    # Check if the opponent has 3 marks and 1 empty space (threat)
+    if opponent_count == 3 and empty_count == 1:
+        score -= 10  # Block the opponent's potential line of four
+    
+    return score
+
+
+def evaluation_function(state):
+    """
+    Evaluation function for non-terminal states that computes the heuristic score.
+    - Positive score for potential lines of four for the player.
+    - Negative score for opponent's threats (potential lines of four).
+    """
+    score = 0
+    board = state.table
+
+    # Evaluate each of the lines (rows, columns, diagonals)
+    lines = [
+        # Rows
+        [board[0, 0], board[0, 1], board[0, 2], board[0, 3]],
+        [board[1, 0], board[1, 1], board[1, 2], board[1, 3]],
+        [board[2, 0], board[2, 1], board[2, 2], board[2, 3]],
+        [board[3, 0], board[3, 1], board[3, 2], board[3, 3]],
+        
+        # Columns
+        [board[0, 0], board[1, 0], board[2, 0], board[3, 0]],
+        [board[0, 1], board[1, 1], board[2, 1], board[3, 1]],
+        [board[0, 2], board[1, 2], board[2, 2], board[3, 2]],
+        [board[0, 3], board[1, 3], board[2, 3], board[3, 3]],
+        
+        # Diagonals
+        [board[0, 0], board[1, 1], board[2, 2], board[3, 3]],
+        [board[0, 3], board[1, 2], board[2, 1], board[3, 0]]
+    ]
+
+    # Sum the score from each line
+    for line in lines:
+        score += evaluate_line_for_four(line)
+    
+    return score

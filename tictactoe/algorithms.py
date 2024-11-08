@@ -1,59 +1,87 @@
 from actions import *
-from easyLevel import *
+from random import randint
+from heuristics import HEURISTIC
+import time
 
 inf = 9999999999
 neg_inf = -9999999999
 
-def ALPHA_BETA_SEARCH(state, stats, evaluation_function=None, max_depth=5):
-    # Default evaluation function if none is provided
-    if evaluation_function is None:
-        evaluation_function = heuristic_score  # Ensure you have a default function like `heuristic_score`
 
-    # Start the alpha-beta search with initial alpha (-inf) and beta (inf)
-    best_move = None
-    best_value = -float('inf')
-    
-    # Initialize children of the current state
-    state.children = ACTIONS(state, stats)  # Generate possible moves (children) based on the current state
-    
-    # Perform alpha-beta search to find the best value
-    def MAX_VALUE(state, alpha, beta, depth):
-        nonlocal best_move, best_value
-        if depth >= max_depth or TERMINAL_TEST(state):
-            return evaluation_function(state)
-        
-        value = -float('inf')
-        for child in state.children:
-            # Call MIN_VALUE for the next level (minimizing player)
-            value = max(value, MIN_VALUE(child, alpha, beta, depth + 1))
-            if value >= beta:
-                return value  # Beta cutoff
-            alpha = max(alpha, value)
-        best_value = value
-        return value
-
-    def MIN_VALUE(state, alpha, beta, depth):
-        nonlocal best_move, best_value
-        if depth >= max_depth or TERMINAL_TEST(state):
-            return evaluation_function(state)
-        
-        value = float('inf')
-        for child in state.children:
-            # Call MAX_VALUE for the next level (maximizing player)
-            value = min(value, MAX_VALUE(child, alpha, beta, depth + 1))
-            if value <= alpha:
-                return value  # Alpha cutoff
-            beta = min(beta, value)
-        best_value = value
-        return value
-    
-    # Start with MAX_VALUE since the maximizing player (computer) moves first
-    MAX_VALUE(state, -float('inf'), float('inf'), 0)
-    
+def ALPHA_BETA_SEARCH(state, start, stats):
+    # Start alpha-beta search with initial alpha (-inf) and beta (inf)
+    v = MAX_VALUE(state=state, alpha=neg_inf, beta=inf, start=start, depth=0, stats=stats)
     # Choose the move corresponding to the best value found
-    best_moves = [child for child in state.children if child.value == best_value]
+    retVal = list(filter(lambda x: x.value == v, state.children))[0]
+    return retVal
+
+def MAX_VALUE(state, alpha, beta, start, depth, stats):
+    # Update the maximum depth reached
+    stats.maxDepthReached = max(stats.maxDepthReached, depth)
+
+    # Increment the total nodes explored
+    stats.totalNodes += 1
+ 
+    #Check if reached maxDepth
+    if depth == stats.maxDepth:
+        return evaluation_function(state= state)
     
-    if best_moves:
-        best_move = best_moves[0]  # Choose the first best move found
+    # Check if the state is terminal
+    if TERMINAL_TEST(state=state):
+        return UTILITY(state=state)
+
+    # Check if the search time has exceeded the 10-second limit
+    duration = time.time() - start
+    if duration >= 10:
+        stats.cutOffOccured = True
+        return HEURISTIC(state)  # Return heuristic value if time limit exceeded
+
+    v = neg_inf
+    state.children = ACTIONS(state,stats)  # Generate children for the state
+
+    for a in state.children:
+        v = max(v, MIN_VALUE(state=a, alpha=alpha, beta=beta, start=start, depth=depth+1, stats=stats))
+        a.value = v  # Store value in the current child state
+
+        # Check for pruning
+        if v >= beta:
+            stats.pruningMax += 1  # Increment pruning count for Max-Value
+            return v
+        alpha = max(alpha, v)  # Update alpha
+
+    return v
+
+def MIN_VALUE(state, alpha, beta, start, depth, stats):
+    # Update the maximum depth reached
+    stats.maxDepthReached = max(stats.maxDepthReached, depth)
+
+    # Increment the total nodes explored
+    stats.totalNodes += 1
+
+    #Check if MaxDepth reached
+    if depth == stats.maxDepth:
+        return evaluation_function(state= state)
     
-    return best_move
+    # Check if the state is terminal
+    if TERMINAL_TEST(state=state):
+        return UTILITY(state=state)
+
+    # Check if the search time has exceeded the 10-second limit
+    duration = time.time() - start
+    if duration >= 10:
+        stats.cutOffOccured = True
+        return HEURISTIC(state)  # Return heuristic value if time limit exceeded
+
+    v = inf
+    state.children = ACTIONS(state,stats)  # Generate children for the state
+
+    for a in state.children:
+        v = min(v, MAX_VALUE(state=a, alpha=alpha, beta=beta, start=start, depth=depth+1, stats=stats))
+        a.value = v  # Store value in the current child state
+
+        # Check for pruning
+        if v <= alpha:
+            stats.pruningMin += 1  # Increment pruning count for Min-Value
+            return v
+        beta = min(beta, v)  # Update beta
+
+    return v
