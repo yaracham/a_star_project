@@ -2,15 +2,10 @@ from state import *
 from utils import *
 from copy import deepcopy
 
-maxDepthReached = 0
-totalNodes = 0
-
-def ACTIONS(state):
-    global maxDepthReached
-    global totalNodes
+def ACTIONS(state, stats, size=4):
     children = []
-    for i in range(0, size):
-        for j in range(0, size):
+    for i in range(size):
+        for j in range(size):
             if state.table[i, j] == empty:
                 childTable = deepcopy(state.table)
                 childTable[i, j] = state.nextPlayer
@@ -19,10 +14,14 @@ def ACTIONS(state):
                 childState.table = childTable
                 childState.value = state.value
                 childState.depth = state.depth + 1
-                maxDepthReached = max(maxDepthReached, childState.depth)
+
+                # Update max depth reached
+                stats.maxDepthReached = max(stats.maxDepthReached, childState.depth)
+
                 children.append(childState)
 
-    totalNodes += len(children)
+    # Update total nodes generated
+    stats.totalNodes += len(children)
     return children
 
 

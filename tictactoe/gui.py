@@ -3,6 +3,7 @@ from utils import *
 from algorithms import *
 from tkinter import Tk, Button
 from tkinter.font import Font
+from time import time
 
 level = 1
 moves = 0
@@ -12,6 +13,7 @@ start = time.time()
 
 class GUI:
     def __init__(self):
+        self.stats = SearchStats()
         self.game = State(nextPlayer=human_player)
         self.app = Tk()
         self.app.title('Tic Tac Toe')
@@ -49,7 +51,7 @@ class GUI:
         self.reset()
 
     def reset(self):
-        self.resetStats()
+        self.stats.reset()  # Reset stats on game reset
         self.game = State(nextPlayer=human_player)
         self.update()
         self.app.destroy()
@@ -69,22 +71,19 @@ class GUI:
     def computer_move(self):
         if level == 3:
             self.game.depth = 0
-            self.game = ALPHA_BETA_SEARCH(self.game, time.time())
-            self.printStats()
-            self.resetStats()
+            self.game = ALPHA_BETA_SEARCH(self.game, time.time(), self.stats)
+            self.stats.print()  # Print stats after the move
+            self.stats.reset()  # Reset stats after printing
         elif level == 2:
             global moves
-            if moves % 2 == 0:
-                self.game = RANDOM_PLAY(self.game)
-            else:
-                self.game = ALPHA_BETA_SEARCH(self.game, time.time())
-                self.printStats()
-                self.resetStats()
+            self.game = ALPHA_BETA_SEARCH(self.game, time.time(), self.stats)
+            self.stats.print()
+            self.stats.reset()
             moves += 1
         elif level == 1:
-            self.game = RANDOM_PLAY(self.game)
-        self.update()
-        self.app.config(cursor="")
+                self.game.depth = 0
+                self.game = ALPHA_BETA_SEARCH(self.game, time.time(), self.stats, evaluation_function=self.evaluation_function, max_depth=5)
+        
 
     def update(self):
         for (x, y) in self.game.table:
@@ -109,35 +108,31 @@ class GUI:
     def mainloop(self):
         self.app.mainloop()
 
-    ## Function to reset the stats of the game
-    def resetStats(self):
-        global cutOffOccured
-        global maxDepthReached
-        global totalNodes
-        global pruningMax
-        global pruningMin
 
-        cutOffOccured = False
-        maxDepthReached = 0
-        totalNodes = 0
-        pruningMax = 0
-        pruningMin = 0
+class SearchStats:
+    def __init__(self):
+        self.cutOffOccured = False
+        self.maxDepthReached = 0
+        self.totalNodes = 0
+        self.pruningMax = 0
+        self.pruningMin = 0
 
-    ## Funtion to print the stats of the game
-    def printStats(self):
-        global cutOffOccured
-        global maxDepthReached
-        global totalNodes
-        global pruningMax
-        global pruningMin
+    def reset(self):
+        self.cutOffOccured = False
+        self.maxDepthReached = 0
+        self.totalNodes = 0
+        self.pruningMax = 0
+        self.pruningMin = 0
 
+    def print(self):
         print("-----------------------")
         print("Statistics of the Move")
-        print("Cutoff Occured:" + str(cutOffOccured))
-        print("Maximum Depth Reached:" + str(maxDepthReached))
-        print("Total number of nodes generated:" + str(totalNodes))
-        print("Number of times pruning occured within Max-Value:" + str(pruningMax))
-        print("Number of times pruning occured within Min-Value:" + str(pruningMin))
+        print(f"Cutoff Occured: {self.cutOffOccured}")
+        print(f"Maximum Depth Reached: {self.maxDepthReached}")
+        print(f"Total number of nodes generated: {self.totalNodes}")
+        print(f"Number of times pruning occured within Max-Value: {self.pruningMax}")
+        print(f"Number of times pruning occured within Min-Value: {self.pruningMin}")
+
 
 class Select:
     def __init__(self):
