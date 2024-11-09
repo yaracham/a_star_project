@@ -8,27 +8,25 @@ neg_inf = -9999999999
 
 
 def ALPHA_BETA_SEARCH(state, start, stats):
-    # Start alpha-beta search with initial alpha (-inf) and beta (inf)
-    v = MAX_VALUE(state=state, alpha=neg_inf, beta=inf, start=start, depth=0, stats=stats)
-    # Choose the move corresponding to the best value found
+    v = MAX_VALUE(state=state, alpha=neg_inf, beta=inf, start=start, stats=stats)
     retVal = list(filter(lambda x: x.value == v, state.children))[0]
     return retVal
 
-def MAX_VALUE(state, alpha, beta, start, depth, stats):
+def MAX_VALUE(state, alpha, beta, start, stats):
     # Update the maximum depth reached
-    stats.maxDepthReached = max(stats.maxDepthReached, depth)
+    stats.maxDepthReached = max(stats.maxDepthReached, state.depth)
 
     # Increment the total nodes explored
     stats.totalNodes += 1
  
-    #Check if reached maxDepth
-    if depth == stats.maxDepth:
-        return evaluation_function(state= state)
-    
     # Check if the state is terminal
     if TERMINAL_TEST(state=state):
         return UTILITY(state=state)
 
+        #Check if reached maxDepth
+    if state.depth == stats.maxDepth:
+        return evaluation_function(state= state)
+    
     # Check if the search time has exceeded the 10-second limit
     duration = time.time() - start
     if duration >= 10:
@@ -39,7 +37,7 @@ def MAX_VALUE(state, alpha, beta, start, depth, stats):
     state.children = ACTIONS(state,stats)  # Generate children for the state
 
     for a in state.children:
-        v = max(v, MIN_VALUE(state=a, alpha=alpha, beta=beta, start=start, depth=depth+1, stats=stats))
+        v = max(v, MIN_VALUE(state=a, alpha=alpha, beta=beta, start=start, stats=stats))
         a.value = v  # Store value in the current child state
 
         # Check for pruning
@@ -50,21 +48,21 @@ def MAX_VALUE(state, alpha, beta, start, depth, stats):
 
     return v
 
-def MIN_VALUE(state, alpha, beta, start, depth, stats):
+def MIN_VALUE(state, alpha, beta, start, stats):
     # Update the maximum depth reached
-    stats.maxDepthReached = max(stats.maxDepthReached, depth)
+    stats.maxDepthReached = max(stats.maxDepthReached, state.depth)
 
     # Increment the total nodes explored
     stats.totalNodes += 1
-
-    #Check if MaxDepth reached
-    if depth == stats.maxDepth:
-        return evaluation_function(state= state)
     
     # Check if the state is terminal
     if TERMINAL_TEST(state=state):
         return UTILITY(state=state)
 
+        #Check if reached maxDepth
+    if state.depth == stats.maxDepth:
+        return evaluation_function(state= state)
+    
     # Check if the search time has exceeded the 10-second limit
     duration = time.time() - start
     if duration >= 10:
@@ -75,7 +73,7 @@ def MIN_VALUE(state, alpha, beta, start, depth, stats):
     state.children = ACTIONS(state,stats)  # Generate children for the state
 
     for a in state.children:
-        v = min(v, MAX_VALUE(state=a, alpha=alpha, beta=beta, start=start, depth=depth+1, stats=stats))
+        v = min(v, MAX_VALUE(state=a, alpha=alpha, beta=beta, start=start, stats=stats))
         a.value = v  # Store value in the current child state
 
         # Check for pruning

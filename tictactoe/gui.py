@@ -80,6 +80,7 @@ class GUI:
             self.stats.reset()
         elif level == 1:
             self.game = ALPHA_BETA_SEARCH(self.game,time.time(),self.stats)
+            self.stats.maxDepth = 5
             self.stats.print()
             self.stats.reset()
         self.update()
