@@ -1,6 +1,5 @@
 from state import *
-from utils import *
-from algorithms import *
+from alphaBeta import *
 from tkinter import Tk, Button
 from tkinter.font import Font
 
@@ -62,7 +61,7 @@ class GUI:
         self.game.table[x, y] = human_player
         self.game.nextPlayer = computer_player
         self.update()
-        if TERMINAL_TEST(self.game):
+        if TERMINAL_TEST(self.game)[0]:
             return
         self.computer_move()
 
@@ -70,17 +69,19 @@ class GUI:
         if level == 3:
             self.game.depth = 0
             self.stats.maxDepth = 15
-            self.game = ALPHA_BETA_SEARCH(self.game, time.time(), self.stats)
+            # self.game = alpha_beta_search_no_pruning(self.game, time.time(), self.stats)
+            self.game = alpha_beta_search_pruning(self.game,time.time(),self.stats)
             self.stats.print()
             self.stats.reset() 
         elif level == 2:
-            self.stats.maxDepth = 10
-            self.game = ALPHA_BETA_SEARCH(self.game, time.time(), self.stats)
+            self.stats.maxDepth = 8
+            # self.game = alpha_beta_search_no_pruning(self.game, time.time(), self.stats)
+            self.game = alpha_beta_search_pruning(self.game,time.time(),self.stats)
             self.stats.print()
             self.stats.reset()
         elif level == 1:
-            self.game = ALPHA_BETA_SEARCH(self.game,time.time(),self.stats)
-            self.stats.maxDepth = 5
+            # self.game = alpha_beta_search_no_pruning(self.game,time.time(),self.stats)            
+            self.game = alpha_beta_search_pruning(self.game,time.time(),self.stats)
             self.stats.print()
             self.stats.reset()
         self.update()
@@ -95,7 +96,7 @@ class GUI:
                 self.buttons[x, y]['state'] = 'normal'
             else:
                 self.buttons[x, y]['state'] = 'disabled'
-        winning = TERMINAL_TEST(self.game)
+        winning = TERMINAL_TEST(self.game)[0]
         if winning:
             winner = self.game.won(player=other_player(self.game.nextPlayer))
             if winner:
