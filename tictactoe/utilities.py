@@ -95,6 +95,7 @@ def TERMINAL_TEST(state):
             and state.table[2, 1] == state.table[3, 0] \
             and state.table[0, 3] != empty:
         return (True,PLAYER_UTIL(state.table[0, 3]))
+    
     if state.is_full():
         return (True,0)
     return (False,-1)

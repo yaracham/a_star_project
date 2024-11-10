@@ -1,5 +1,6 @@
 from utilities import *
 import time
+from random import randint
 
 inf = 9999999999
 neg_inf = -9999999999
@@ -132,3 +133,9 @@ def min_pruning(state, alpha, beta, start, depth, stats):
         beta = min(beta, v)  
 
     return v
+
+def RANDOM_PLAY(state, stats):
+    state.children = ACTIONS(state, stats)
+    retVal = randint(0, len(state.children) - 1)
+    return state.children[retVal]
+

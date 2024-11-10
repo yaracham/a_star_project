@@ -68,21 +68,19 @@ class GUI:
     def computer_move(self):
         if level == 3:
             self.game.depth = 0
-            self.stats.maxDepth = 15
+            self.stats.maxDepth = 10
             # self.game = alpha_beta_search_no_pruning(self.game, time.time(), self.stats)
             self.game = alpha_beta_search_pruning(self.game,time.time(),self.stats)
             self.stats.print()
             self.stats.reset() 
         elif level == 2:
-            self.stats.maxDepth = 8
+            self.stats.maxDepth = 2
             # self.game = alpha_beta_search_no_pruning(self.game, time.time(), self.stats)
             self.game = alpha_beta_search_pruning(self.game,time.time(),self.stats)
             self.stats.print()
             self.stats.reset()
         elif level == 1:
-            # self.game = alpha_beta_search_no_pruning(self.game,time.time(),self.stats)            
-            self.game = alpha_beta_search_pruning(self.game,time.time(),self.stats)
-            self.stats.print()
+            self.game = RANDOM_PLAY(self.game, self.stats)
             self.stats.reset()
         self.update()
         self.app.config(cursor="")
