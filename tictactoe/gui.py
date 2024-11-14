@@ -65,17 +65,24 @@ class GUI:
     def computer_move(self):
         if level == 3:
             self.game.depth = 0
-            self.stats.maxDepth = 10
-            self.game = alpha_beta_search_pruning(self.game, time.time(), self.stats)
+            self.stats.maxDepth = 5
+            # self.game = minimax_no_pruning(self.game, time.time(), self.stats, 3)
+            self.game = alpha_beta_search_pruning(self.game, time.time(), self.stats, 3)
             self.stats.print()
             self.stats.reset()
         elif level == 2:
+            self.game.depth = 0
             self.stats.maxDepth = 2
-            self.game = alpha_beta_search_pruning(self.game, time.time(), self.stats)
+            # self.game = minimax_no_pruning(self.game, time.time(), self.stats, 2)
+            self.game = alpha_beta_search_pruning(self.game, time.time(), self.stats, 2)
             self.stats.print()
             self.stats.reset()
         elif level == 1:
-            self.game = RANDOM_PLAY(self.game, self.stats)
+            self.game.depth = 0
+            self.stats.maxDepth = 1
+            self.game = minimax_no_pruning(self.game, time.time(), self.stats, 1)
+            # self.game = alpha_beta_search_pruning(self.game, time.time(), self.stats, 1)
+            self.stats.print()
             self.stats.reset()
         self.update()
         self.app.config(cursor="")
@@ -84,7 +91,7 @@ class GUI:
         for (x, y) in self.game.table:
             text = self.game.table[x, y]
             self.buttons[x, y]['text'] = text
-            self.buttons[x, y]['disabledforeground'] = 'white'
+            self.buttons[x, y]['disabledforeground'] = 'black'
             self.buttons[x, y]['state'] = 'normal' if text == empty else 'disabled'
         winning = TERMINAL_TEST(self.game)[0]
         if winning:
@@ -127,21 +134,18 @@ class Select:
     def __init__(self):
         self.app = Tk()
         self.app.title('Select Who Goes First')
-        self.app.geometry("300x200")  # Adjusted window size to minimize unused space
+        self.app.geometry("300x200")  
         self.font = Font(family="Helvetica", size=16)
 
-        # Set dark mode colors
         self.app.configure(bg="#333333")
         self.button_bg = "#555555"
         self.button_fg = "#FFFFFF"
         
-        # Create the label for the question and place it at the center
         question_label = Button(self.app, text="Select who goes first", font=self.font, 
                                 bg="#333333", fg="#FFFFFF", relief="flat", activeforeground="#FF3333", 
                                 width=20, height=2)
-        question_label.grid(row=0, column=0, columnspan=2, pady=20)  # Center question
+        question_label.grid(row=0, column=0, columnspan=2, pady=20)  
 
-        # Create the "Computer" and "Human" buttons side by side
         computer_handle = lambda: self.choose("c")
         human_handle = lambda: self.choose("h")
 
@@ -161,7 +165,6 @@ class Select:
 
     def mainloop(self):
         self.app.mainloop()
-
 
 class SelectLevel:
     def __init__(self):

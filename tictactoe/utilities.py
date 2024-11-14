@@ -100,61 +100,7 @@ def TERMINAL_TEST(state):
         return (True,0)
     return (False,-1)
 
-
-def evaluate_line_for_four(cells):
-    """
-    Helper function to evaluate a single line (row, column, or diagonal)
-    Returns a score based on the number of potential lines of four.
-    A potential line of four is when a player has 3 marks and 1 empty cell.
-    """
-    player_count = sum(1 for cell in cells if cell == 'X')
-    opponent_count = sum(1 for cell in cells if cell == 'O')
-    empty_count = sum(1 for cell in cells if cell is None)
-
-    score = 0
-    
-    if player_count == 3 and empty_count == 1:
-        score += 10 
-    
-    if opponent_count == 3 and empty_count == 1:
-        score -= 10  
-    
-    return score
-
-
-def evaluation_function(state):
-    """
-    Evaluation function for non-terminal states that computes the heuristic score.
-    - Positive score for potential lines of four for the player.
-    - Negative score for opponent's threats (potential lines of four).
-    """
-    score = 0
-    board = state.table
-
-    lines = [
-        # Rows
-        [board[0, 0], board[0, 1], board[0, 2], board[0, 3]],
-        [board[1, 0], board[1, 1], board[1, 2], board[1, 3]],
-        [board[2, 0], board[2, 1], board[2, 2], board[2, 3]],
-        [board[3, 0], board[3, 1], board[3, 2], board[3, 3]],
-        
-        # Columns
-        [board[0, 0], board[1, 0], board[2, 0], board[3, 0]],
-        [board[0, 1], board[1, 1], board[2, 1], board[3, 1]],
-        [board[0, 2], board[1, 2], board[2, 2], board[3, 2]],
-        [board[0, 3], board[1, 3], board[2, 3], board[3, 3]],
-        
-        # Diagonals
-        [board[0, 0], board[1, 1], board[2, 2], board[3, 3]],
-        [board[0, 3], board[1, 2], board[2, 1], board[3, 0]]
-    ]
-
-    for line in lines:
-        score += evaluate_line_for_four(line)
-    
-    return score
-
-def evaluation_function_2(state):
+def evluation_function(state, level):
     x3 = 0
     x2 = 0
     x1 = 0
@@ -264,4 +210,11 @@ def evaluation_function_2(state):
         elif xs == 3:
             x3 += 1
 
-    return (6 * x3 + 3 * x2 + x1) - (6 * o3 + 3 * o2 + o1) - 0.3*(state.depth)
+    if level == 1:
+        return (6 * x3 + 3 * x2 + x1)
+    
+    if level ==2 :
+        return (6 * x3 + 3 * x2 + x1) - (2* o3 + 0.5 * o2 + o1) 
+    
+    return (6 * x3 + 3 * x2 + x1) - (6 * o3 + 3 * o2 + o1) 
+
