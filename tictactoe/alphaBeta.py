@@ -16,6 +16,14 @@ def minimax_no_pruning(state, start, stats, level):
 
 def max_no_pruning(state, start, depth, stats, level):
     print()
+
+    terminal = TERMINAL_TEST(state=state)
+    if terminal[0]:
+        print("TERMINAL STATE: ", terminal[1])
+        state.printBoard()
+        print()
+        return terminal[1]
+    
     if depth >= stats.maxDepth:
         print("MAX DEPTH REACHED, utility = ",evluation_function(state= state, level=level))
         state.printBoard()
@@ -24,13 +32,6 @@ def max_no_pruning(state, start, depth, stats, level):
     
     stats.maxDepthReached = max(stats.maxDepthReached, depth)
     stats.totalNodes += 1
-
-    terminal = TERMINAL_TEST(state=state)
-    if terminal[0]:
-        print("TERMINAL STATE: ", terminal[1])
-        state.printBoard()
-        print()
-        return terminal[1]
 
     duration = time.time() - start
     if duration >= 10:
@@ -48,6 +49,14 @@ def max_no_pruning(state, start, depth, stats, level):
 
 def min_no_pruning(state, start, depth, stats, level):
     print()
+
+    terminal = TERMINAL_TEST(state=state)
+    if terminal[0]:
+        print("TERMINAL STATE: ", terminal[1])
+        state.printBoard()
+        print()
+        return terminal[1]
+    
     if depth >= stats.maxDepth:
         print("MAX DEPTH REACHED, utility = ",evluation_function(state= state, level=level) )
         state.printBoard()
@@ -57,12 +66,7 @@ def min_no_pruning(state, start, depth, stats, level):
     stats.maxDepthReached = max(stats.maxDepthReached, depth)
     stats.totalNodes += 1
 
-    terminal = TERMINAL_TEST(state=state)
-    if terminal[0]:
-        print("TERMINAL STATE: ", terminal[1])
-        state.printBoard()
-        print()
-        return terminal[1]
+
 
     duration = time.time() - start
     if duration >= 10:
@@ -92,6 +96,14 @@ def alpha_beta_search_pruning(state, start, stats, level):
 
 def max_pruning(state, alpha, beta, start, depth, stats, level):
     print()
+    terminal = TERMINAL_TEST(state=state)
+
+    if terminal[0]:
+        print("TERMINAL STATE: ", terminal[1])
+        state.printBoard()
+        print()
+        return terminal[1]
+    
     if depth >= stats.maxDepth:
         print("MAX DEPTH REACHED, utility = ",evluation_function(state= state, level=level))
         state.printBoard()
@@ -101,12 +113,7 @@ def max_pruning(state, alpha, beta, start, depth, stats, level):
     stats.maxDepthReached = max(stats.maxDepthReached, depth)
     stats.totalNodes += 1
 
-    terminal = TERMINAL_TEST(state=state)
-    if terminal[0]:
-        print("TERMINAL STATE: ", terminal[1])
-        state.printBoard()
-        print()
-        return terminal[1]
+
 
     v = neg_inf
     state.children = ACTIONS(state,stats)  
@@ -124,6 +131,13 @@ def max_pruning(state, alpha, beta, start, depth, stats, level):
 
 def min_pruning(state, alpha, beta, start, depth, stats, level):
     print()
+    terminal = TERMINAL_TEST(state=state)
+    if terminal[0]:
+        print("TERMINAL STATE: ", terminal[1])
+        state.printBoard()
+        print()
+        return terminal[1]
+    
     if depth >= stats.maxDepth:
         print("MAX DEPTH REACHED, utility = ",evluation_function(state= state, level=level) )
         state.printBoard()
@@ -133,12 +147,7 @@ def min_pruning(state, alpha, beta, start, depth, stats, level):
     stats.maxDepthReached = max(stats.maxDepthReached, depth)
     stats.totalNodes += 1
 
-    terminal = TERMINAL_TEST(state=state)
-    if terminal[0]:
-        print("TERMINAL STATE: ", terminal[1])
-        state.printBoard()
-        print()
-        return terminal[1]
+
 
     v = inf
     state.children = ACTIONS(state,stats) 

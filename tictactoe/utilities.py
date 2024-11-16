@@ -5,8 +5,7 @@ from state import x_player, o_player
 computer_player = x_player
 human_player = o_player
 
-min_util = -1000
-max_util = +1000
+
 
 def other_player(player):
     if player == x_player:
@@ -35,6 +34,8 @@ def ACTIONS(state, stats, size=4):
     stats.totalNodes += len(children)
     return children
 
+min_util = -1000
+max_util = +1000
 
 def PLAYER_UTIL(player):
     if player == computer_player:

@@ -19,7 +19,6 @@ class State:
             for x in range(size):
                 self.table[x, y] = empty
 
-        # copy constructor
         if other:
             self.__dict__ = deepcopy(other.__dict__)
 
